@@ -94,32 +94,55 @@ function generateRefId() {
     return `NTS-${year}-${num}`;
 }
 
+const WEBHOOK_URL = 'https://momina2005.app.n8n.cloud/webhook-test/resume-upload';
+
 // Handle submit
-function handleSubmit(e) {
+async function handleSubmit(e) {
     e.preventDefault();
 
     if (!validateForm()) return;
 
     const btn = document.getElementById('submitBtn');
+    const submitError = document.getElementById('submitError');
+    const refId = generateRefId();
+
+    submitError.textContent = '';
+    submitError.classList.remove('visible');
     btn.classList.add('loading');
     btn.disabled = true;
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+        // FormData sends the text fields and the selected resume as multipart/form-data.
+        const formData = new FormData(form);
+        formData.append('referenceId', refId);
+        formData.append('submittedAt', new Date().toISOString());
+
+        const response = await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`Webhook returned ${response.status}`);
+        }
+
         btn.classList.remove('loading');
         btn.disabled = false;
 
-        // Show success
         form.style.display = 'none';
         const successState = document.getElementById('successState');
         successState.classList.add('active');
 
-        // Set reference ID
-        document.getElementById('refId').textContent = generateRefId();
+        document.getElementById('refId').textContent = refId;
 
-        // Scroll to success
         successState.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 2000);
+    } catch (error) {
+        console.error('Application submission failed:', error);
+        submitError.textContent = 'We could not submit your application. Please try again.';
+        submitError.classList.add('visible');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+    }
 }
 
 // Reset form
@@ -127,6 +150,8 @@ function resetForm() {
     form.reset();
     document.querySelectorAll('.position-card').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.form-group').forEach(g => g.classList.remove('error'));
+    document.getElementById('submitError').textContent = '';
+    document.getElementById('submitError').classList.remove('visible');
 
     const successState = document.getElementById('successState');
     successState.classList.remove('active');

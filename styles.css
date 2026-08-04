@@ -22,7 +22,7 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: borr-box;
+    box-sizing: border-box;
 }
 
 html {
@@ -417,6 +417,17 @@ textarea {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+}
+
+.submit-error {
+    display: none;
+    margin: 1rem 0 0;
+    color: var(--error);
+    text-align: center;
+}
+
+.submit-error.visible {
+    display: block;
 }
 
 .error-msg {
