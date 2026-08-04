@@ -1,2 +1,21 @@
 .DS_Store
+.vscode/
+node_modules/
+dist/
+build/
+*.log
 
+# Local environment variables and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+n8n-data/
+
+# Keep unsanitized n8n exports local; commit only the reviewed workflow JSON.
+workflow/private/

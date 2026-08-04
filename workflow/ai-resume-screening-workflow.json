@@ -1,0 +1,786 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ Boolean($binary.resume) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              },
+              "id": "val-upload-cond-1"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ead32308-ff51-4479-9abf-54b6b4059311",
+      "name": "Validate Upload Received",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        1568
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "REPLACE_WITH_YOUR_EMAIL",
+        "subject": "=⚠️ Resume Upload Missing File — {{ $json.body.fullName || $json.fullName }}",
+        "message": "=<p>A submission came through <strong>without an attached resume file</strong> (no 'resume' binary field found).</p><p><strong>Name:</strong> {{ $json.body.fullName || $json.fullName }}<br><strong>Email:</strong> {{ $json.body.email || $json.email }}<br><strong>Position:</strong> {{ $json.body.position || $json.position }}</p><p>Please follow up with the candidate to request a valid resume upload.</p>",
+        "options": {}
+      },
+      "id": "6662a96e-81dc-402e-b5c8-af59729644a8",
+      "name": "Notify - Missing Resume File",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        1952
+      ],
+      "webhookId": "notify-missing-resume-webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resume-upload",
+        "options": {}
+      },
+      "id": "2c4a9d17-0145-4dfd-acfe-05ac3043a561",
+      "name": "Candidate Uploads Resume (Webhook)1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        1568
+      ],
+      "webhookId": "resume-upload-webhook"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "resume",
+        "options": {}
+      },
+      "id": "2979634f-e218-48af-809b-668adb23527d",
+      "name": "Extract Text (PDF)1",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1440
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "a3fc4c7e-1f09-4d31-9a2d-9c959fbe2d33",
+      "name": "Extract Text (DOCX)1",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        16,
+        1648
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "app8SmhHDuyMkjnZt",
+          "mode": "list",
+          "cachedResultName": "Recruitment Pipeline",
+          "cachedResultUrl": "https://airtable.com/app8SmhHDuyMkjnZt"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKTYNIyiOmKOvzl",
+          "mode": "list",
+          "cachedResultName": "Candidates",
+          "cachedResultUrl": "https://airtable.com/app8SmhHDuyMkjnZt/tblKTYNIyiOmKOvzl"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Score": "={{ $json.matchScore }}",
+            "Total Years Experience": "={{ $json.totalYearsExperience }}",
+            "Email": "={{ $json.candidateEmail }}",
+            "Name": "={{ $json.candidateName }}",
+            "Position": "={{ $json.position }}",
+            "Skills": "={{ $json.skills }}",
+            "Missing Skills": "={{ $json.missingSkills }}",
+            "Strengths": "={{ $json.strengths }}",
+            "Weaknesses": "={{ $json.weaknesses }}",
+            "Evaluated At": "={{ $json.evaluatedAt }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Position",
+              "displayName": "Position",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Skills",
+              "displayName": "Skills",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Missing Skills",
+              "displayName": "Missing Skills",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Strengths",
+              "displayName": "Strengths",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Weaknesses",
+              "displayName": "Weaknesses",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Years Experience",
+              "displayName": "Total Years Experience",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Evaluated At",
+              "displayName": "Evaluated At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "33f9c791-c877-456a-840d-69c1e2dc6ec0",
+      "name": "Save to Airtable1",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1680,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const resumeText = $json.text ?? $json.data ?? '';\n\nconst webhook = $('Candidate Uploads Resume (Webhook)1').first().json;\n\n// Use the body if it exists, otherwise use the whole webhook JSON\nconst webhookData = webhook.body ?? webhook;\n\n// Guard: flag suspiciously short/garbled extraction (common with .docx raw-text reads)\nconst trimmed = (resumeText || '').trim();\nconst extractionLooksBad = trimmed.length < 40;\n\nreturn [\n  {\n    json: {\n      ...webhookData,\n      resumeText,\n      extractionLooksBad,\n      pdfInfo: $json.info ?? {},\n      numPages: $json.numpages ?? 0,\n      pdfVersion: $json.version ?? '',\n    },\n  },\n];"
+      },
+      "id": "bba3a370-34f7-4981-95e4-9b308951aecb",
+      "name": "Prepare Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        1536
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert technical recruiter. A candidate has applied for a specific position. You have their resume and application details. Your job is to analyze everything and produce a structured evaluation — you do not need a separate job description; use your own knowledge of what this position typically requires and evaluate the candidate against those standard expectations.\n\nCANDIDATE NAME:\n{{ $json.fullName }}\nCANDIDATE EMAIL:\n{{ $json.email }}\nPOSITION APPLIED FOR:\n{{ $json.position }}\n\nCANDIDATE'S STATED EXPERIENCE LEVEL:\n{{ $json.experience }}\nCOVER LETTER:\n{{ $json.coverLetter }}\n\nRESUME TEXT:\n{{ $json.resumeText }}\n\nINSTRUCTIONS:\n- Copy CANDIDATE NAME and CANDIDATE EMAIL exactly as given into the output — do not alter, correct, or re-extract them from the resume text, even if the resume shows a different name or email.\n- Extract the candidate's actual profile (skills, experience, education, certifications) from the resume text only — don't invent anything not stated.\n- Based on your knowledge of what a \"{{ $json.position }}\" role typically requires (common skills, tools, years of experience, education expectations), evaluate how well this candidate's actual resume matches those typical expectations.\n- Compare their stated experience level against what their resume actually demonstrates — flag any mismatch (e.g. they claim \"1-3 years\" but resume shows 5+, or vice versa) as a strength or weakness as appropriate.\n- Consider the cover letter only as supporting context (motivation, communication clarity) — do not let it inflate the technical match score.\n- Calculate total years of professional experience from the resume's date ranges.\n- If the resume text is empty, unparseable, or looks like extraction garbage (long strings of symbols/binary artifacts rather than real words), return all extraction fields empty/0, matchScore 0, and note in weaknesses: \"Resume could not be parsed.\"\n\nSCORING (matchScore 0-100):\n- Weight roughly: 50% technical skills relevant to the position, 30% years/level of relevant experience, 20% education/certifications relevance.\n- Above 80: candidate meets nearly all typical requirements for this role.\n- Below 50: significant gaps in core skills or experience level for this role.\n- Be conservative — don't inflate the score for loosely related or adjacent skills.\n\nOUTPUT FORMAT — CRITICAL:\nRespond with ONLY a single valid JSON object. No markdown fences, no commentary, no trailing commas. Match this exact shape:\n\n{\n  \"candidateName\": string,\n  \"candidateEmail\": string,\n  \"skills\": [string],\n  \"experience\": [{\"company\": string, \"role\": string, \"years\": number}],\n  \"education\": [{\"degree\": string, \"institution\": string, \"year\": string}],\n  \"certifications\": [string],\n  \"totalYearsExperience\": number,\n  \"matchScore\": number,\n  \"missingSkills\": [string],\n  \"strengths\": [string],\n  \"weaknesses\": [string]\n}\n\nReturn nothing except that JSON object.",
+        "options": {
+          "systemMessage": "You are an expert technical recruiter and resume parser. You rely on your own knowledge of industry-standard role requirements when no formal job description is provided. Always respond with strictly valid JSON only — no code fences, no explanation, no extra text before or after the JSON object."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        1504
+      ],
+      "id": "386efd50-d0eb-45ef-add4-02bf5c84f852",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json.output;\nconst prepData = $('Prepare Data').first().json;\n\nlet parsed = null;\nlet parseError = null;\n\ntry {\n  const cleaned = (raw || '').replace(/```json|```/g, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch (err) {\n  parseError = err.message;\n}\n\n// Safety net: if the model returned invalid JSON, don't crash the workflow.\n// Fall back to a zero-score record flagged for manual review, using data\n// we already captured from the original submission.\nif (!parsed) {\n  parsed = {\n    candidateName: prepData.fullName || '',\n    candidateEmail: prepData.email || '',\n    skills: [],\n    experience: [],\n    education: [],\n    certifications: [],\n    totalYearsExperience: 0,\n    matchScore: 0,\n    missingSkills: [],\n    strengths: [],\n    weaknesses: [`AI response could not be parsed as JSON and requires manual review. Error: ${parseError}`]\n  };\n}\n\nreturn [\n  {\n    json: {\n      candidateName: parsed.candidateName,\n      candidateEmail: parsed.candidateEmail,\n      position: prepData.position || '',\n      matchScore: parsed.matchScore,\n      totalYearsExperience: parsed.totalYearsExperience,\n      skills: (parsed.skills || []).join(\", \"),\n      certifications: (parsed.certifications || []).join(\", \"),\n      missingSkills: (parsed.missingSkills || []).join(\", \"),\n      strengths: (parsed.strengths || []).join(\"\\n\"),\n      weaknesses: (parsed.weaknesses || []).join(\"\\n\"),\n      experience: (parsed.experience || [])\n        .map(e => `${e.role} - ${e.company} (${e.years} years)`)\n        .join(\"\\n\"),\n      education: (parsed.education || [])\n        .map(e => `${e.degree} - ${e.institution} (${e.year})`)\n        .join(\"\\n\"),\n      evaluatedAt: new Date().toISOString(),\n      parseError: parseError,\n      rawAIOutput: parseError ? raw : ''\n    }\n  }\n];"
+      },
+      "id": "94951cd4-8332-4695-9c96-3944c88f97cc",
+      "name": "Format Final Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        1792
+      ],
+      "id": "7360202e-4912-4237-83ec-0f8c08bc94b3",
+      "name": "Google Gemini Chat Model1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $binary.resume.mimeType }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "66c0419c-3fc8-4cfc-b17d-cce02b8c966b"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $binary.resume.mimeType }}",
+                    "rightValue": "wordprocessingml",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "7a1b2c3d-4e5f-4a6b-8c9d-0e1f2a3b4c5d"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "1421c53a-3ad6-4f61-91eb-85872f53fd0a",
+      "name": "Detect File Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -208,
+        1536
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.slotFound }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              },
+              "id": "slot-found-cond-1"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3ec315fe-563f-46b1-9df1-1a3a4b93a578",
+      "name": "Slot Found?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2528,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "REPLACE_WITH_YOUR_EMAIL",
+        "subject": "=⚠️ No Interview Slot Found — {{ $json.fields.Name }}",
+        "message": "=<p>This candidate scored above 80 and qualifies for an interview, but no open slot was found in the next 45 days.</p><p><strong>Name:</strong> {{ $json.fields.Name }}<br><strong>Email:</strong> {{ $json.fields.Email }}<br><strong>Position:</strong> {{ $json.fields.Position }}<br><strong>Score:</strong> {{ $json.fields.Score }}</p><p>Please schedule manually or free up calendar capacity.</p>",
+        "options": {}
+      },
+      "id": "9253f2ea-e9c2-4e57-b30b-5e6e6805a708",
+      "name": "Notify Admin - No Slot Available1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2848,
+        1008
+      ],
+      "webhookId": "notify-no-slot-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.fields.Score }}",
+              "rightValue": 80,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "id": "69ec3858-8203-4d53-b343-8775dc6d3fcf"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c9e855c5-fdd6-4519-a68b-dc525c2ec1c9",
+      "name": "Score > 80?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_EMAIL",
+          "mode": "list",
+          "cachedResultName": "REPLACE_WITH_YOUR_EMAIL"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "5909a2d8-876b-42c3-83ed-28a1d5da5b1e",
+      "name": "Get Existing Interview Events1",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2112,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Interview hours: 10:00 AM - 7:00 PM\nconst DAY_START_HOUR = 10;\nconst DAY_END_HOUR = 19;\nconst SLOT_DURATION_MIN = 30;\nconst MAX_DAYS_TO_CHECK = 45;\n\n// Calendar events from previous node (Get Existing Interview Events)\nconst events = $input.all().map(item => item.json);\n\nfunction isWeekend(dt) {\n  return dt.weekday === 6 || dt.weekday === 7;\n}\n\nfunction overlapsExisting(candidateStart, candidateEnd) {\n  const startMs = candidateStart.toMillis();\n  const endMs = candidateEnd.toMillis();\n\n  return events.some(ev => {\n    const evStartRaw = ev.start?.dateTime || ev.start?.date;\n    const evEndRaw = ev.end?.dateTime || ev.end?.date;\n\n    if (!evStartRaw || !evEndRaw) return false;\n\n    const evStartMs = new Date(evStartRaw).getTime();\n    const evEndMs = new Date(evEndRaw).getTime();\n\n    return startMs < evEndMs && endMs > evStartMs;\n  });\n}\n\nlet day = $now\n  .plus({ days: 1 })\n  .set({\n    hour: DAY_START_HOUR,\n    minute: 0,\n    second: 0,\n    millisecond: 0\n  });\n\nlet found = null;\nlet daysChecked = 0;\n\nwhile (!found && daysChecked < MAX_DAYS_TO_CHECK) {\n\n  if (!isWeekend(day)) {\n\n    let slotStart = day.set({\n      hour: DAY_START_HOUR,\n      minute: 0\n    });\n\n    const dayEnd = day.set({\n      hour: DAY_END_HOUR,\n      minute: 0\n    });\n\n    while (slotStart.plus({ minutes: SLOT_DURATION_MIN }) <= dayEnd) {\n\n      const slotEnd = slotStart.plus({\n        minutes: SLOT_DURATION_MIN\n      });\n\n      if (!overlapsExisting(slotStart, slotEnd)) {\n        found = {\n          start: slotStart,\n          end: slotEnd\n        };\n        break;\n      }\n\n      slotStart = slotStart.plus({\n        minutes: SLOT_DURATION_MIN\n      });\n    }\n  }\n\n  day = day.plus({\n    days: 1\n  }).set({\n    hour: DAY_START_HOUR,\n    minute: 0,\n    second: 0,\n    millisecond: 0\n  });\n\n  daysChecked++;\n}\n\n// FIX: pull the candidate record from 'Score > 80?' — NOT from $input,\n// since this node's direct input is the calendar-events list, not the candidate.\nconst record = $('Score > 80?1').first().json;\n\nif (!found) {\n  return [{\n    json: {\n      ...record,\n      slotFound: false,\n      interviewSlotStart: null,\n      interviewSlotEnd: null\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    ...record,\n    slotFound: true,\n    interviewSlotStart: found.start.toISO(),\n    interviewSlotEnd: found.end.toISO()\n  }\n}];"
+      },
+      "id": "e6739c0c-bc77-4121-b2bc-384e10a359b5",
+      "name": "Find Next Available Slot1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2320,
+        1264
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_EMAIL",
+          "mode": "list",
+          "cachedResultName": "REPLACE_WITH_YOUR_EMAIL"
+        },
+        "start": "={{ $json.interviewSlotStart }}",
+        "end": "={{ $json.interviewSlotEnd }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.fields.Email }}"
+          ],
+          "description": "=Position: {{ $json.fields.Position }}\n\nMatch Score: {{ $json.fields.Score }}\n\nStrengths:\n{{ $json.fields.Strengths }}\n\nAreas to Probe:\n{{ $json.fields.Weaknesses }}",
+          "summary": "=Interview: {{ $json.fields.Name }}"
+        }
+      },
+      "id": "003561b2-8371-4919-bf39-e707c2f854a8",
+      "name": "Schedule Interview (Google Calendar)1",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2608,
+        1392
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.fields.Email }}",
+        "subject": "=Update on Your Application — {{ $json.fields.Name }}",
+        "message": "=<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;\">   <p>Dear {{ $json.fields.Name }},</p>    <p>Thank you for taking the time to apply and for sharing your background and experience with us.</p>    <p>After careful review of your application, we've decided not to move forward with your candidacy for this role at this time. This decision doesn't reflect on your skills or potential — we simply had to make a difficult choice among a strong pool of applicants.</p>    <p>We'll keep your resume on file and encourage you to apply again for future openings that match your experience.</p>    <p>We wish you all the best in your job search and future endeavors.</p>    <p style=\"margin-top: 24px;\">Best regards,<br>   <strong>Hiring Team</strong></p>    <hr style=\"border: none; border-top: 1px solid #e0e0e0; margin: 24px 0;\">   <p style=\"font-size: 12px; color: #999;\">This is an automated message. Please do not reply directly to this email.</p> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2176,
+        1504
+      ],
+      "id": "195ba74f-85fe-4ea3-be6b-145b24705c22",
+      "name": "Rejection-Email",
+      "webhookId": "86960c12-635d-4d89-a999-2ec8c01cd95b"
+    },
+    {
+      "parameters": {
+        "sendTo": "REPLACE_WITH_YOUR_EMAIL",
+        "subject": "=✅ {{ $json.summary }} Successfully Scheduled",
+        "message": "=<h2>🎉 Interview Scheduled Successfully</h2>\n\n<p>An interview has been successfully scheduled for a shortlisted candidate.</p>\n\n<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\" style=\"border-collapse: collapse;\">\n  <tr>\n    <td><strong>Interview</strong></td>\n    <td>{{ $json.summary }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>Candidate Email</strong></td>\n    <td>{{ $json.attendees[0].email }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>Start Time</strong></td>\n    <td>{{ $json.start.dateTime }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>End Time</strong></td>\n    <td>{{ $json.end.dateTime }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>Time Zone</strong></td>\n    <td>{{ $json.start.timeZone }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>Status</strong></td>\n    <td>{{ $json.status }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>Calendar Event</strong></td>\n    <td>\n      <a href=\"{{ $json.htmlLink }}\">Open Google Calendar Event</a>\n    </td>\n  </tr>\n</table>\n\n<h3>AI Resume Screening Summary</h3>\n\n<pre style=\"white-space: pre-wrap; font-family: Arial, sans-serif;\">\n{{ $json.description }}\n</pre>\n\n<hr>\n\n<p><strong>Generated Automatically</strong><br>\nAI Resume Screening System using n8n, Google Calendar, Airtable, and AI.</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3184,
+        1488
+      ],
+      "id": "9578a052-e2ee-4f89-ae5a-8c2b735d0b83",
+      "name": "Email-HR",
+      "webhookId": "21aa9095-b9c4-4760-83c5-b55568bd119b"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Score > 80?1').item.json.fields.Email }}",
+        "subject": "Congratulations! You've Been Selected for an Interview 🎉",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n</head>\n\n<body style=\"margin:0;padding:0;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;\">\n\n<table width=\"100%\" bgcolor=\"#f4f6f9\" cellpadding=\"0\" cellspacing=\"0\">\n<tr>\n<td align=\"center\">\n\n<table width=\"650\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:10px;overflow:hidden;\">\n\n<tr>\n<td align=\"center\" bgcolor=\"#2563eb\" style=\"padding:30px;color:white;\">\n<h1 style=\"margin:0;\">Interview Invitation</h1>\n<p style=\"margin-top:10px;\">We're excited to move forward with your application!</p>\n</td>\n</tr>\n\n<tr>\n<td style=\"padding:35px;\">\n\n<h2>Hello {{ $('Score > 80?1').item.json.fields.Name }}, 👋</h2>\n\n<p>\nThank you for applying for the <strong>{{ $('Score > 80?1').item.json.fields.Position }}</strong> position.\n</p>\n\n<p>\nAfter carefully reviewing your application, we're pleased to invite you to the next stage of our recruitment process.\n</p>\n\n<hr>\n\n<h3>Interview Details</h3>\n\n<table width=\"100%\" cellpadding=\"8\" style=\"border-collapse:collapse;\">\n\n<tr style=\"background:#f7f7f7;\">\n<td width=\"35%\"><strong>Candidate</strong></td>\n<td>{{ $('Score > 80?1').item.json.fields.Name }}</td>\n</tr>\n\n<tr>\n<td><strong>Position</strong></td>\n<td>{{ $('Score > 80?1').item.json.fields.Position }}</td>\n</tr>\n\n<tr style=\"background:#f7f7f7;\">\n<td><strong>Date & Time</strong></td>\n<td>{{ $json.start.dateTime }}</td>\n</tr>\n\n<tr>\n<td><strong>End Time</strong></td>\n<td>{{ $json.end.dateTime }}</td>\n</tr>\n\n<tr style=\"background:#f7f7f7;\">\n<td><strong>Duration</strong></td>\n<td>30 Minutes</td>\n</tr>\n\n<tr>\n<td><strong>Time Zone</strong></td>\n<td>{{ $json.start.timeZone }}</td>\n</tr>\n\n<tr style=\"background:#f7f7f7;\">\n<td><strong>Calendar Invitation</strong></td>\n<td>\n<a href=\"{{ $json.htmlLink }}\">\nOpen Google Calendar Event\n</a>\n</td>\n</tr>\n\n</table>\n\n<br>\n\n<div style=\"background:#eef6ff;border-left:4px solid #2563eb;padding:15px;border-radius:6px;\">\n<strong>Please Note</strong>\n<ul>\n<li>Join the interview at least <strong>5 minutes early</strong>.</li>\n<li>Ensure your internet connection is stable.</li>\n<li>Keep your resume and any relevant documents ready.</li>\n<li>If you need to reschedule, simply reply to this email.</li>\n</ul>\n</div>\n\n<br>\n\n<p>\nWe appreciate your interest in joining our team and look forward to speaking with you.\n</p>\n\n<p>\nBest wishes,<br><br>\n\n<strong>HR Team</strong><br>\nNextTech Solutions Pvt. Ltd.<br>\n📧 HR_EMAIL_NOT_CONFIGURED<br>\n🌐 YOUR_COMPANY_WEBSITE\n</p>\n\n</td>\n</tr>\n\n<tr>\n<td align=\"center\" bgcolor=\"#f7f7f7\" style=\"padding:18px;font-size:12px;color:#666;\">\nThis interview invitation was generated automatically by our AI Recruitment Platform.\n</td>\n</tr>\n\n</table>\n\n</td>\n</tr>\n</table>\n\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3136,
+        1168
+      ],
+      "id": "ea94c499-baac-418d-97d5-f654912b30a8",
+      "name": "Send Interview Invitation",
+      "webhookId": "4bcdd3fa-d56f-48e0-ae19-560aefae50c1"
+    }
+  ],
+  "connections": {
+    "Validate Upload Received": {
+      "main": [
+        [
+          {
+            "node": "Detect File Type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify - Missing Resume File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Candidate Uploads Resume (Webhook)1": {
+      "main": [
+        [
+          {
+            "node": "Validate Upload Received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text (PDF)1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text (DOCX)1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Airtable1": {
+      "main": [
+        [
+          {
+            "node": "Score > 80?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Data": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Final Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Final Result": {
+      "main": [
+        [
+          {
+            "node": "Save to Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect File Type": {
+      "main": [
+        [
+          {
+            "node": "Extract Text (PDF)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Text (DOCX)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Slot Found?1": {
+      "main": [
+        [
+          {
+            "node": "Schedule Interview (Google Calendar)1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Admin - No Slot Available1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score > 80?1": {
+      "main": [
+        [
+          {
+            "node": "Get Existing Interview Events1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rejection-Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Existing Interview Events1": {
+      "main": [
+        [
+          {
+            "node": "Find Next Available Slot1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Next Available Slot1": {
+      "main": [
+        [
+          {
+            "node": "Slot Found?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Interview (Google Calendar)1": {
+      "main": [
+        [
+          {
+            "node": "Email-HR",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Interview Invitation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

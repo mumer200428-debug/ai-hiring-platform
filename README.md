@@ -107,7 +107,7 @@ const WEBHOOK_URL = "https://<your-instance>.app.n8n.cloud/webhook/resume-upload
 ### 2. Workflow (n8n)
 
 1. In n8n, go to **Workflows → Import from File** and select `workflow/ai-resume-screening-workflow.json`.
-2. Reconnect credentials for each service the workflow uses — the JSON only stores credential *references* (IDs/names), not secrets, so you'll need to re-select or re-create:
+2. Reconnect credentials for each service the workflow uses — this reviewed export deliberately contains no credentials or account references, so you'll need to select or create them again:
    - Gmail (OAuth2)
    - Google Calendar (OAuth2)
    - Airtable (OAuth2)
@@ -136,7 +136,7 @@ The included `.gitignore` excludes:
 - OS/editor junk (`.DS_Store`, `.vscode/`)
 - `node_modules/`, build output, logs
 
-**Before your first push**, open `workflow/ai-resume-screening-workflow.json` and confirm no real API keys, tokens, or personal email addresses you don't want public are hardcoded in it — n8n exports usually only include credential *IDs*, not the secrets themselves, but it's worth a quick check since Gmail addresses used for testing (like `letsautomatewithumer@gmail.com`) are visible in plain text in node parameters.
+**Before every push**, review new workflow exports for API keys, tokens, credential references, personal email addresses, and pinned test data. Keep only the sanitized workflow JSON in this repository; place the original export in `workflow/private/`, which is ignored by Git.
 
 ## Roadmap Ideas
 
