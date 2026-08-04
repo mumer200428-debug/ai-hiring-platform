@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers — NovaTech Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">NovaTech</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#positions">Careers</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Join Our Team</h1>
+            <p>Build the future with NovaTech Solutions. We're looking for talented people who love solving challenging problems.</p>
+            <a href="#positions" class="btn">
+                View Open Positions
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Positions -->
+    <section id="positions" class="reveal">
+        <h2 class="section-title">Open Positions</h2>
+        <div class="positions-grid">
+            <div class="position-card" data-position="Backend Developer" onclick="selectPosition(this)">
+                <h3>Backend Developer</h3>
+                <p>Design and build scalable APIs and microservices that power our platform.</p>
+                <div class="position-meta">
+                    <span class="tag">Full-time</span>
+                    <span>Remote / On-site</span>
+                </div>
+            </div>
+            <div class="position-card" data-position="React Developer" onclick="selectPosition(this)">
+                <h3>React Developer</h3>
+                <p>Create beautiful, performant user interfaces with modern React ecosystems.</p>
+                <div class="position-meta">
+                    <span class="tag">Full-time</span>
+                    <span>Remote</span>
+                </div>
+            </div>
+            <div class="position-card" data-position="UI/UX Designer" onclick="selectPosition(this)">
+                <h3>UI/UX Designer</h3>
+                <p>Craft intuitive experiences and pixel-perfect designs for web and mobile.</p>
+                <div class="position-meta">
+                    <span class="tag">Full-time</span>
+                    <span>Hybrid</span>
+                </div>
+            </div>
+            <div class="position-card" data-position="AI Engineer" onclick="selectPosition(this)">
+                <h3>AI Engineer</h3>
+                <p>Develop and deploy machine learning models that solve real-world problems.</p>
+                <div class="position-meta">
+                    <span class="tag">Full-time</span>
+                    <span>On-site</span>
+                </div>
+            </div>
+            <div class="position-card" data-position="DevOps Engineer" onclick="selectPosition(this)">
+                <h3>DevOps Engineer</h3>
+                <p>Build CI/CD pipelines and manage cloud infrastructure at scale.</p>
+                <div class="position-meta">
+                    <span class="tag">Full-time</span>
+                    <span>Remote</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Form -->
+    <section id="application" class="reveal">
+        <h2 class="section-title">Application Form</h2>
+        
+        <form class="form-section" id="applyForm" onsubmit="handleSubmit(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" name="fullName" placeholder="John Doe" required>
+                    <span class="error-msg">Please enter your full name</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email Address <span class="required">*</span></label>
+                    <input type="email" name="email" placeholder="john@example.com" required>
+                    <span class="error-msg">Please enter a valid email</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" placeholder="+1 (555) 000-0000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Position Applying For <span class="required">*</span></label>
+                    <select name="position" id="positionSelect" required>
+                        <option value="">Select a position</option>
+                        <option>Backend Developer</option>
+                        <option>React Developer</option>
+                        <option>UI/UX Designer</option>
+                        <option>AI Engineer</option>
+                        <option>DevOps Engineer</option>
+                    </select>
+                    <span class="error-msg">Please select a position</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Years of Experience <span class="required">*</span></label>
+                    <select name="experience" required>
+                        <option value="">Select experience</option>
+                        <option>0-1 years</option>
+                        <option>1-3 years</option>
+                        <option>3-5 years</option>
+                        <option>5-8 years</option>
+                        <option>8+ years</option>
+                    </select>
+                    <span class="error-msg">Please select your experience level</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>LinkedIn Profile</label>
+                    <input type="url" name="linkedin" placeholder="https://linkedin.com/in/username">
+                </div>
+                
+                <div class="form-group">
+                    <label>Portfolio / GitHub</label>
+                    <input type="url" name="portfolio" placeholder="https://github.com/username">
+                </div>
+                
+                <div class="form-group">
+                    <label>Upload Resume <span class="required">*</span></label>
+                    <input type="file" name="resume" accept=".pdf,.doc,.docx" required>
+                    <span class="error-msg">Please upload your resume (PDF, DOC, DOCX)</span>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Cover Letter <span style="color: var(--text-dim); font-weight: 400;">(optional)</span></label>
+                    <textarea name="coverLetter" placeholder="Tell us why you're a great fit for this role..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="privacy" name="privacy" required>
+                        <label for="privacy">I agree to the <a href="#">Privacy Policy</a> and processing of my personal data for recruitment purposes.</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn submit-btn" id="submitBtn">
+                <span class="spinner"></span>
+                <span class="btn-text">Submit Application</span>
+            </button>
+        </form>
+
+        <!-- Success State -->
+        <div class="success-state" id="successState">
+            <div class="success-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h2>Thank You!</h2>
+            <p>Application Received</p>
+            
+            <div class="reference-box">
+                <div class="reference-label">Reference ID</div>
+                <div class="reference-id" id="refId">NTS-2026-1042</div>
+            </div>
+            
+            <div class="success-details">
+                <p>Our recruitment team is reviewing your application.</p>
+                <p>You will receive an email shortly.</p>
+            </div>
+            
+            <button class="btn back-btn" onclick="resetForm()">Submit Another Application</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <ul class="footer-links">
+                <li><a href="#">About</a></li>
+                <li><a href="#positions">Careers</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms</a></li>
+                <li><a href="#">LinkedIn</a></li>
+            </ul>
+            <div class="copyright">© 2026 NovaTech Solutions. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
