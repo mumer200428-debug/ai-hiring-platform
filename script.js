@@ -36,7 +36,7 @@ function selectPosition(card) {
 }
 
 // Form validation
-const fom = document.getElementById('applyForm');
+const form = document.getElementById('applyForm');
 const inputs = form.querySelectorAll('input[required], select[required]');
 
 inputs.forEach(input => {
